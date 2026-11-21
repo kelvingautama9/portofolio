@@ -11,11 +11,40 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: #FAFAFA;
+    color: #111111;
+    transition:
+      background-color 650ms cubic-bezier(0.22, 1, 0.36, 1),
+      color 650ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  html.dark,
+  html.dark body {
+    background-color: #0A0A0A;
+    color: #EDEDED;
   }
 
   .font-mono {
     font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
   }
+}
+
+/* Ultra-Smooth Theme Color Interpolation Across All Surfaces, Text & Borders */
+.theme-smooth,
+.theme-smooth *,
+.theme-smooth *::before,
+.theme-smooth *::after {
+  transition-property: background-color, border-color, color, fill, stroke, text-decoration-color, box-shadow;
+  transition-duration: 650ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Native View Transitions API Cross-Dissolve Support (144Hz GPU Accelerated) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 600ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  mix-blend-mode: normal;
 }
 
 /* High Refresh Rate (60Hz - 144Hz+) GPU Compositor Optimization */
