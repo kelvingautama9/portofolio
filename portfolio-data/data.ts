@@ -155,10 +155,10 @@ export const PORTFOLIO_DATA: ProfileData = {
   cvPdfPath: "/assets/aistudio/CV-Kelvin_58d193b4.pdf",
 
   roleTitle: {
-    id: "Operasional Marketing & Otomasi Alur Kerja",
-    en: "Marketing Operations & Workflow Automation",
-    jp: "マーケティングオペレーション＆業務自動化",
-    zh: "营销运营与工作流自动化"
+    id: "Operasional Marketing & Operator Produksi",
+    en: "Marketing Operations & Production Operator",
+    jp: "マーケティングオペレーション＆製造オペレーター",
+    zh: "营销运营与生产操作员"
   },
 
   summary: {
