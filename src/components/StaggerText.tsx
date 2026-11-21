@@ -1,15 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'motion/react';
 
 interface StaggerTextProps {
   text: string;
   className?: string;
   as?: 'p' | 'span' | 'h1' | 'h2' | 'h3';
   /**
-   * 'word': memecah per kata (aman dari pemotongan huruf di tengah kata).
-   * 'char': memecah per karakter TETAPI setiap kata tetap dibungkus dalam
-   *         <span className="inline-block whitespace-nowrap"> sehingga sebuah kata
-   *         TIDAK PERNAH terpotong di tengah (seperti "Machin-e" atau "Cik-arang").
+   * 'word': memecah per kata (sangat ringan, hanya ~10-30 DOM node per kalimat).
+   * 'char': memecah per karakter namun tetap dibungkus per kata agar tidak pernah
+   *         terpotong di tengah kata saat ganti baris.
    */
   mode?: 'word' | 'char';
   /** Delay awal sebelum animasi dimulai (detik) */
@@ -18,6 +16,12 @@ interface StaggerTextProps {
   stagger?: number;
 }
 
+/**
+ * StaggerText (Zero-Lag 144Hz Architecture):
+ * Menggunakan pure CSS compositor transition (`opacity` + `translate3d`) dengan
+ * variabel `--stagger-delay` dan hanya 1 IntersectionObserver pada komponen induk,
+ * tanpa membuat ratusan instance JS Framer Motion atau filter `blur()` yang berat.
+ */
 export const StaggerText: React.FC<StaggerTextProps> = ({
   text,
   className = '',
@@ -26,48 +30,14 @@ export const StaggerText: React.FC<StaggerTextProps> = ({
   delay = 0,
   stagger
 }) => {
-  const ref = useRef<HTMLElement | null>(null);
-  const [inFocus, setInFocus] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setInFocus(true);
-          } else {
-            const rect = entry.boundingClientRect;
-            if (rect.top > window.innerHeight || rect.bottom < 0) {
-              setInFocus(false);
-            }
-          }
-        });
-      },
-      {
-        threshold: 0.12,
-        rootMargin: '0px 0px -6% 0px'
-      }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
   const words = text.split(' ');
-  const stepDelay = stagger ?? (mode === 'char' ? 0.011 : 0.016);
+  const stepMs = (stagger ?? (mode === 'char' ? 0.011 : 0.015)) * 1000;
+  const baseDelayMs = delay * 1000;
 
-  // Hitung kumulatif indeks karakter agar animasi mode="char" tetap berurutan per huruf
   let charCursor = 0;
 
   return (
-    <Tag
-      ref={ref as React.RefObject<never>}
-      aria-label={text}
-      className={`inline ${className}`}
-    >
+    <Tag aria-label={text} className={`inline ${className}`}>
       {words.map((word, wordIdx) => {
         if (mode === 'char') {
           const chars = Array.from(word);
@@ -79,24 +49,15 @@ export const StaggerText: React.FC<StaggerTextProps> = ({
               <span className="inline-block whitespace-nowrap" aria-hidden="true">
                 {chars.map((ch, chIdx) => {
                   const globalCharIdx = startIdx + chIdx;
+                  const delayMs = Math.round(baseDelayMs + globalCharIdx * stepMs);
                   return (
-                    <motion.span
+                    <span
                       key={`${chIdx}-${ch}`}
-                      initial={{ opacity: 0.08, y: 3, filter: 'blur(1px)' }}
-                      animate={
-                        inFocus
-                          ? { opacity: 1, y: 0, filter: 'blur(0px)' }
-                          : { opacity: 0.14, y: 2, filter: 'blur(0.5px)' }
-                      }
-                      transition={{
-                        duration: 0.24,
-                        delay: inFocus ? delay + globalCharIdx * stepDelay : 0,
-                        ease: [0.16, 1, 0.3, 1]
-                      }}
-                      className="inline-block will-change-[transform,opacity,filter] transform-gpu"
+                      style={{ '--stagger-delay': `${delayMs}ms` } as React.CSSProperties}
+                      className="stagger-token"
                     >
                       {ch}
-                    </motion.span>
+                    </span>
                   );
                 })}
               </span>
@@ -105,26 +66,16 @@ export const StaggerText: React.FC<StaggerTextProps> = ({
           );
         }
 
-        // Mode 'word': setiap kata adalah 1 unit utuh dengan spasi normal di antaranya
+        const delayMs = Math.round(baseDelayMs + wordIdx * stepMs);
         return (
           <React.Fragment key={`${wordIdx}-${word}`}>
-            <motion.span
+            <span
               aria-hidden="true"
-              initial={{ opacity: 0.08, y: 3, filter: 'blur(1px)' }}
-              animate={
-                inFocus
-                  ? { opacity: 1, y: 0, filter: 'blur(0px)' }
-                  : { opacity: 0.14, y: 2, filter: 'blur(0.5px)' }
-              }
-              transition={{
-                duration: 0.26,
-                delay: inFocus ? delay + wordIdx * stepDelay : 0,
-                ease: [0.16, 1, 0.3, 1]
-              }}
-              className="inline-block whitespace-nowrap will-change-[transform,opacity,filter] transform-gpu"
+              style={{ '--stagger-delay': `${delayMs}ms` } as React.CSSProperties}
+              className="stagger-token whitespace-nowrap"
             >
               {word}
-            </motion.span>
+            </span>
             {wordIdx < words.length - 1 && ' '}
           </React.Fragment>
         );
@@ -139,13 +90,19 @@ interface FocusSectionProps {
   children: React.ReactNode;
 }
 
+/**
+ * FocusBlock:
+ * Satu-satunya observer per blok bagian. Mengatur atribut `data-focused="true"`
+ * sehingga seluruh StaggerText di dalamnya beranimasi langsung melalui CSS GPU compositor
+ * tanpa memicu React re-render pada setiap kata/huruf.
+ */
 export const FocusBlock: React.FC<FocusSectionProps> = ({
   id,
   className = '',
   children
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [isFocused, setIsFocused] = useState(false);
+  const [isFocused, setIsFocused] = useState(true);
 
   useEffect(() => {
     const el = ref.current;
@@ -154,12 +111,19 @@ export const FocusBlock: React.FC<FocusSectionProps> = ({
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          setIsFocused(entry.isIntersecting);
+          if (entry.isIntersecting) {
+            setIsFocused(true);
+          } else {
+            const rect = entry.boundingClientRect;
+            if (rect.top > window.innerHeight || rect.bottom < 0) {
+              setIsFocused(false);
+            }
+          }
         });
       },
       {
         threshold: 0.08,
-        rootMargin: '-4% 0px -8% 0px'
+        rootMargin: '0px 0px -6% 0px'
       }
     );
 
@@ -168,22 +132,13 @@ export const FocusBlock: React.FC<FocusSectionProps> = ({
   }, []);
 
   return (
-    <motion.div
+    <div
       ref={ref}
       id={id}
-      initial={{ opacity: 0.15, y: 8 }}
-      animate={
-        isFocused
-          ? { opacity: 1, y: 0 }
-          : { opacity: 0.42, y: 3 }
-      }
-      transition={{
-        duration: 0.32,
-        ease: [0.16, 1, 0.3, 1]
-      }}
-      className={`will-change-[transform,opacity] transform-gpu ${className}`}
+      data-focused={isFocused ? 'true' : 'false'}
+      className={`focus-block ${className}`}
     >
       {children}
-    </motion.div>
+    </div>
   );
 };

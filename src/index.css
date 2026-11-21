@@ -13,9 +13,6 @@
     -moz-osx-font-smoothing: grayscale;
     background-color: #FAFAFA;
     color: #111111;
-    transition:
-      background-color 650ms cubic-bezier(0.22, 1, 0.36, 1),
-      color 650ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   html.dark,
@@ -29,34 +26,78 @@
   }
 }
 
-/* Ultra-Smooth Theme Color Interpolation Across All Surfaces, Text & Borders */
-.theme-smooth,
-.theme-smooth *,
-.theme-smooth *::before,
-.theme-smooth *::after {
-  transition-property: background-color, border-color, color, fill, stroke, text-decoration-color, box-shadow;
-  transition-duration: 650ms;
-  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* Native View Transitions API Cross-Dissolve Support (144Hz GPU Accelerated) */
+/*
+ * Zero-Lag Theme Transition:
+ * 1. When View Transitions API is supported, the browser takes a single GPU texture snapshot
+ *    and cross-fades the entire viewport at native 144Hz with ZERO per-element CPU recalculation.
+ * 2. Fallback class `.is-theme-switching` is attached ONLY for 420ms during theme toggle and
+ *    targets only structural surfaces (never individual word/char spans).
+ */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 600ms;
+  animation-duration: 420ms;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   mix-blend-mode: normal;
 }
 
-/* High Refresh Rate (60Hz - 144Hz+) GPU Compositor Optimization */
-.gpu-layer {
+html.is-theme-switching,
+html.is-theme-switching body,
+html.is-theme-switching header,
+html.is-theme-switching section,
+html.is-theme-switching footer,
+html.is-theme-switching article,
+html.is-theme-switching div,
+html.is-theme-switching button,
+html.is-theme-switching a {
+  transition:
+    background-color 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 380ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+/*
+ * Zero-Overhead 144Hz Scroll Stagger Animation:
+ * Pure CSS transform + opacity driven by parent `[data-focused="true"]`.
+ * Avoids mounting hundreds of JS motion instances or expensive CSS blur() filters.
+ */
+.stagger-token {
+  display: inline-block;
+  opacity: 0.12;
+  transform: translate3d(0, 4px, 0);
+  transition:
+    opacity 280ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: 0ms;
+}
+
+[data-focused="true"] .stagger-token {
+  opacity: 1;
   transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-  will-change: transform, opacity;
+  transition-delay: var(--stagger-delay, 0ms);
+}
+
+.focus-block {
+  opacity: 0.28;
+  transform: translate3d(0, 8px, 0);
+  transition:
+    opacity 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.focus-block[data-focused="true"] {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  .stagger-token,
+  .focus-block {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

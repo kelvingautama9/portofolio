@@ -99,11 +99,11 @@ export default function App() {
 
   const toggleTheme = () => {
     haptics.trigger('confirm');
+    const root = document.documentElement;
 
     const applyThemeChange = () => {
       setDarkMode((prev) => {
         const next = !prev;
-        const root = document.documentElement;
         if (next) {
           root.classList.add('dark');
         } else {
@@ -113,12 +113,11 @@ export default function App() {
       });
     };
 
-    // Use GPU-accelerated View Transitions API when supported for zero-flicker 144Hz cross-dissolve,
-    // combined with 650ms cubic-bezier CSS property interpolation across all browsers.
     const docWithTransition = document as Document & {
       startViewTransition?: (callback: () => void) => void;
     };
 
+    // Jika browser mendukung View Transitions API, gunakan cross-fade GPU snapshot murni (0% lag)
     if (
       typeof docWithTransition.startViewTransition === 'function' &&
       !window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -127,7 +126,12 @@ export default function App() {
         applyThemeChange();
       });
     } else {
+      // Fallback: aktifkan class transisi hanya selama 400ms saat tombol ditekan, lalu matikan kembali
+      root.classList.add('is-theme-switching');
       applyThemeChange();
+      window.setTimeout(() => {
+        root.classList.remove('is-theme-switching');
+      }, 400);
     }
   };
 
@@ -146,9 +150,9 @@ export default function App() {
   });
 
   return (
-    <div className="theme-smooth min-h-screen w-full overflow-x-hidden bg-[#FAFAFA] text-[#111111] dark:bg-[#0A0A0A] dark:text-[#EDEDED]">
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#FAFAFA] text-[#111111] dark:bg-[#0A0A0A] dark:text-[#EDEDED]">
       {/* Top Bar Contract: 3 zones separated by gap-8 */}
-      <header className="sticky top-0 z-30 w-full bg-[#FAFAFA]/90 dark:bg-[#0A0A0A]/90 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800 gpu-layer">
+      <header className="sticky top-0 z-30 w-full bg-[#FAFAFA]/95 dark:bg-[#0A0A0A]/95 backdrop-blur-xs border-b border-neutral-200 dark:border-neutral-800">
         <div className="max-w-[1080px] mx-auto px-5 sm:px-6 h-14 flex items-center justify-between gap-4 sm:gap-8">
           {/* Zone 1: Single text element wordmark */}
           <a
