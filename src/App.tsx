@@ -380,7 +380,7 @@ export default function App() {
         {/* Hero / Identity & Executive Summary */}
         <section className="pb-10 md:pb-16 border-b border-neutral-200 dark:border-neutral-800">
           <FocusBlock>
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+            <div className="mb-6">
               <div className="min-w-0">
                 <p className="text-xs font-mono text-neutral-500 dark:text-neutral-400 mb-2 leading-relaxed">
                   <StaggerText
@@ -398,17 +398,6 @@ export default function App() {
                     stagger={0.028}
                   />
                 </h1>
-              </div>
-
-              <div className="flex items-center">
-                <button
-                  type="button"
-                  onClick={() => handleCopy(PORTFOLIO_DATA.email, 'hero-email')}
-                  onMouseEnter={() => haptics.trigger('tick')}
-                  className="px-3 py-1.5 text-xs font-mono border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-300 rounded hover:border-neutral-400 dark:hover:border-neutral-600 hover:text-neutral-900 dark:hover:text-neutral-100 active:scale-[0.98] transition-all duration-150 truncate max-w-full"
-                >
-                  {copiedKey === 'hero-email' ? ui.emailCopied : PORTFOLIO_DATA.email}
-                </button>
               </div>
             </div>
 
