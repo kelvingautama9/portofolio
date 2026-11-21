@@ -5,7 +5,12 @@ interface StaggerTextProps {
   text: string;
   className?: string;
   as?: 'p' | 'span' | 'h1' | 'h2' | 'h3';
-  /** Mode 'word' untuk paragraf panjang agar performa 144Hz mulus, 'char' untuk judul/teks pendek seperti ketikan */
+  /**
+   * 'word': memecah per kata (aman dari pemotongan huruf di tengah kata).
+   * 'char': memecah per karakter TETAPI setiap kata tetap dibungkus dalam
+   *         <span className="inline-block whitespace-nowrap"> sehingga sebuah kata
+   *         TIDAK PERNAH terpotong di tengah (seperti "Machin-e" atau "Cik-arang").
+   */
   mode?: 'word' | 'char';
   /** Delay awal sebelum animasi dimulai (detik) */
   delay?: number;
@@ -13,13 +18,6 @@ interface StaggerTextProps {
   stagger?: number;
 }
 
-/**
- * StaggerText:
- * Menampilkan teks secara bertahap (fade-in dari transparan menjadi normal + micro-translate3d)
- * berderet seperti ketikan halus ketika elemen masuk ke area fokus layar saat di-scroll.
- * Menggunakan compositor-only properties (opacity + transform: translate3d) agar berjalan
- * di native refresh rate perangkat (60Hz / 120Hz / 144Hz) tanpa frame drop.
- */
 export const StaggerText: React.FC<StaggerTextProps> = ({
   text,
   className = '',
@@ -38,11 +36,9 @@ export const StaggerText: React.FC<StaggerTextProps> = ({
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          // Trigger ketika elemen masuk ke fokus viewport, dan re-focus secara halus saat di-scroll kembali
           if (entry.isIntersecting) {
             setInFocus(true);
           } else {
-            // Reset jika keluar jauh dari layar agar saat di-scroll lagi tetap hidup & interaktif
             const rect = entry.boundingClientRect;
             if (rect.top > window.innerHeight || rect.bottom < 0) {
               setInFocus(false);
@@ -52,7 +48,7 @@ export const StaggerText: React.FC<StaggerTextProps> = ({
       },
       {
         threshold: 0.12,
-        rootMargin: '0px 0px -8% 0px'
+        rootMargin: '0px 0px -6% 0px'
       }
     );
 
@@ -60,37 +56,77 @@ export const StaggerText: React.FC<StaggerTextProps> = ({
     return () => observer.disconnect();
   }, []);
 
-  const tokens = mode === 'char' ? Array.from(text) : text.split(' ');
-  const stepDelay = stagger ?? (mode === 'char' ? 0.014 : 0.018);
+  const words = text.split(' ');
+  const stepDelay = stagger ?? (mode === 'char' ? 0.011 : 0.016);
+
+  // Hitung kumulatif indeks karakter agar animasi mode="char" tetap berurutan per huruf
+  let charCursor = 0;
 
   return (
     <Tag
       ref={ref as React.RefObject<never>}
       aria-label={text}
-      className={`inline-block ${className}`}
+      className={`inline ${className}`}
     >
-      {tokens.map((token, idx) => {
-        const isSpace = token === ' ';
+      {words.map((word, wordIdx) => {
+        if (mode === 'char') {
+          const chars = Array.from(word);
+          const startIdx = charCursor;
+          charCursor += chars.length + 1;
+
+          return (
+            <React.Fragment key={`${wordIdx}-${word}`}>
+              <span className="inline-block whitespace-nowrap" aria-hidden="true">
+                {chars.map((ch, chIdx) => {
+                  const globalCharIdx = startIdx + chIdx;
+                  return (
+                    <motion.span
+                      key={`${chIdx}-${ch}`}
+                      initial={{ opacity: 0.08, y: 3, filter: 'blur(1px)' }}
+                      animate={
+                        inFocus
+                          ? { opacity: 1, y: 0, filter: 'blur(0px)' }
+                          : { opacity: 0.14, y: 2, filter: 'blur(0.5px)' }
+                      }
+                      transition={{
+                        duration: 0.24,
+                        delay: inFocus ? delay + globalCharIdx * stepDelay : 0,
+                        ease: [0.16, 1, 0.3, 1]
+                      }}
+                      className="inline-block will-change-[transform,opacity,filter] transform-gpu"
+                    >
+                      {ch}
+                    </motion.span>
+                  );
+                })}
+              </span>
+              {wordIdx < words.length - 1 && ' '}
+            </React.Fragment>
+          );
+        }
+
+        // Mode 'word': setiap kata adalah 1 unit utuh dengan spasi normal di antaranya
         return (
-          <motion.span
-            key={`${idx}-${token}`}
-            aria-hidden="true"
-            initial={{ opacity: 0.08, y: 4, filter: 'blur(1.5px)' }}
-            animate={
-              inFocus
-                ? { opacity: 1, y: 0, filter: 'blur(0px)' }
-                : { opacity: 0.14, y: 3, filter: 'blur(1px)' }
-            }
-            transition={{
-              duration: 0.28,
-              delay: inFocus ? delay + idx * stepDelay : 0,
-              ease: [0.16, 1, 0.3, 1]
-            }}
-            className="inline-block will-change-[transform,opacity,filter] transform-gpu"
-          >
-            {isSpace ? '\u00A0' : token}
-            {mode === 'word' && idx < tokens.length - 1 ? '\u00A0' : ''}
-          </motion.span>
+          <React.Fragment key={`${wordIdx}-${word}`}>
+            <motion.span
+              aria-hidden="true"
+              initial={{ opacity: 0.08, y: 3, filter: 'blur(1px)' }}
+              animate={
+                inFocus
+                  ? { opacity: 1, y: 0, filter: 'blur(0px)' }
+                  : { opacity: 0.14, y: 2, filter: 'blur(0.5px)' }
+              }
+              transition={{
+                duration: 0.26,
+                delay: inFocus ? delay + wordIdx * stepDelay : 0,
+                ease: [0.16, 1, 0.3, 1]
+              }}
+              className="inline-block whitespace-nowrap will-change-[transform,opacity,filter] transform-gpu"
+            >
+              {word}
+            </motion.span>
+            {wordIdx < words.length - 1 && ' '}
+          </React.Fragment>
         );
       })}
     </Tag>
@@ -103,12 +139,6 @@ interface FocusSectionProps {
   children: React.ReactNode;
 }
 
-/**
- * FocusSection:
- * Mengatur fokus visual (opacity & transform GPU) berdasarkan posisi scroll pada layar,
- * sehingga bagian yang sedang dibaca tampil tajam sedangkan bagian yang baru masuk
- * muncul bertahap secara mulus hingga 144Hz.
- */
 export const FocusBlock: React.FC<FocusSectionProps> = ({
   id,
   className = '',
@@ -141,14 +171,14 @@ export const FocusBlock: React.FC<FocusSectionProps> = ({
     <motion.div
       ref={ref}
       id={id}
-      initial={{ opacity: 0.15, y: 10 }}
+      initial={{ opacity: 0.15, y: 8 }}
       animate={
         isFocused
           ? { opacity: 1, y: 0 }
-          : { opacity: 0.38, y: 4 }
+          : { opacity: 0.42, y: 3 }
       }
       transition={{
-        duration: 0.34,
+        duration: 0.32,
         ease: [0.16, 1, 0.3, 1]
       }}
       className={`will-change-[transform,opacity] transform-gpu ${className}`}

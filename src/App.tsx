@@ -120,7 +120,7 @@ export default function App() {
     <div className="min-h-screen w-full overflow-x-hidden bg-[#FAFAFA] text-[#111111] dark:bg-[#0A0A0A] dark:text-[#EDEDED] transition-colors duration-150">
       {/* Top Bar Contract: 3 zones separated by gap-8 */}
       <header className="sticky top-0 z-30 w-full bg-[#FAFAFA]/95 dark:bg-[#0A0A0A]/95 backdrop-blur-sm border-b border-neutral-200 dark:border-neutral-800 gpu-layer">
-        <div className="max-w-[1080px] mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4 sm:gap-8">
+        <div className="max-w-[1080px] mx-auto px-5 sm:px-6 h-14 flex items-center justify-between gap-4 sm:gap-8">
           {/* Zone 1: Single text element wordmark */}
           <a
             href="#top"
@@ -177,31 +177,31 @@ export default function App() {
         </div>
       </header>
 
-      <main id="top" className="max-w-[1080px] w-full mx-auto px-4 sm:px-6 pt-10 pb-20 md:pt-16 md:pb-32">
+      <main id="top" className="max-w-[1080px] w-full mx-auto px-5 sm:px-6 pt-10 pb-20 md:pt-16 md:pb-32">
         {/* Hero / Identity & Executive Summary */}
-        <section className="pb-12 md:pb-16 border-b border-neutral-200 dark:border-neutral-800">
+        <section className="pb-10 md:pb-16 border-b border-neutral-200 dark:border-neutral-800">
           <FocusBlock>
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-7">
               <div className="min-w-0">
-                <p className="text-xs font-mono text-neutral-500 dark:text-neutral-400 mb-2 break-words">
+                <p className="text-xs font-mono text-neutral-500 dark:text-neutral-400 mb-2 leading-relaxed">
                   <StaggerText
                     text={`${PORTFOLIO_DATA.roleTitle} · ${PORTFOLIO_DATA.location}`}
-                    mode="char"
-                    stagger={0.012}
+                    mode="word"
+                    stagger={0.025}
                   />
                 </p>
                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100">
                   <StaggerText
                     text={PORTFOLIO_DATA.name}
                     mode="char"
-                    delay={0.05}
+                    delay={0.04}
                     stagger={0.028}
                   />
                 </h1>
               </div>
 
               {/* Clean Workspace Mode / Theme Switcher & Quick Links */}
-              <div className="flex flex-wrap items-center gap-2.5">
+              <div className="flex flex-wrap items-center gap-2">
                 <button
                   type="button"
                   onClick={toggleTheme}
@@ -221,56 +221,77 @@ export default function App() {
               </div>
             </div>
 
-            <div className="text-base sm:text-lg leading-relaxed text-neutral-700 dark:text-neutral-300 max-w-3xl font-normal">
+            <div className="text-[15px] sm:text-lg leading-relaxed text-neutral-700 dark:text-neutral-300 max-w-3xl font-normal">
               <StaggerText
                 text={PORTFOLIO_DATA.summary}
                 mode="word"
-                delay={0.08}
-                stagger={0.016}
+                delay={0.06}
+                stagger={0.014}
               />
             </div>
 
-            {/* Unboxed Contact Bar with typographic separators */}
-            <div className="mt-8 pt-6 border-t border-neutral-200/70 dark:border-neutral-800/70 flex flex-wrap items-center gap-y-2 gap-x-2.5 text-xs font-mono text-neutral-500 dark:text-neutral-400">
-              <span>{PORTFOLIO_DATA.location}</span>
-              <span aria-hidden="true">·</span>
-              <a
-                href={PORTFOLIO_DATA.phoneLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => haptics.trigger('tap')}
-                className="hover:text-neutral-900 dark:hover:text-neutral-100 underline-offset-4 hover:underline transition-colors"
-              >
-                {PORTFOLIO_DATA.phone}
-              </a>
-              <span aria-hidden="true">·</span>
-              <a
-                href={`mailto:${PORTFOLIO_DATA.email}`}
-                onClick={() => haptics.trigger('tap')}
-                className="hover:text-neutral-900 dark:hover:text-neutral-100 underline-offset-4 hover:underline transition-colors break-all"
-              >
-                {PORTFOLIO_DATA.email}
-              </a>
-              <span aria-hidden="true">·</span>
-              <a
-                href={PORTFOLIO_DATA.linkedinUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => haptics.trigger('tap')}
-                className="hover:text-neutral-900 dark:hover:text-neutral-100 underline-offset-4 hover:underline transition-colors break-all"
-              >
-                {PORTFOLIO_DATA.linkedin}
-              </a>
-              <span aria-hidden="true">·</span>
-              <a
-                href={PORTFOLIO_DATA.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => haptics.trigger('tap')}
-                className="hover:text-neutral-900 dark:hover:text-neutral-100 underline-offset-4 hover:underline transition-colors break-all"
-              >
-                {PORTFOLIO_DATA.github}
-              </a>
+            {/* Clean Contact Metadata: Stacked 2-column grid on mobile, inline row on desktop */}
+            <div className="mt-8 pt-6 border-t border-neutral-200/80 dark:border-neutral-800/80">
+              <div className="grid grid-cols-1 sm:flex sm:flex-wrap sm:items-center gap-y-2 sm:gap-x-3 text-xs font-mono text-neutral-500 dark:text-neutral-400">
+                <div className="flex items-center gap-2">
+                  <span className="text-neutral-400 dark:text-neutral-500 sm:hidden w-16 shrink-0">Lokasi</span>
+                  <span className="text-neutral-700 dark:text-neutral-300">{PORTFOLIO_DATA.location}</span>
+                </div>
+                <span aria-hidden="true" className="hidden sm:inline">·</span>
+
+                <div className="flex items-center gap-2">
+                  <span className="text-neutral-400 dark:text-neutral-500 sm:hidden w-16 shrink-0">Telepon</span>
+                  <a
+                    href={PORTFOLIO_DATA.phoneLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => haptics.trigger('tap')}
+                    className="text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-neutral-100 underline-offset-4 hover:underline transition-colors"
+                  >
+                    {PORTFOLIO_DATA.phone}
+                  </a>
+                </div>
+                <span aria-hidden="true" className="hidden sm:inline">·</span>
+
+                <div className="flex items-center gap-2">
+                  <span className="text-neutral-400 dark:text-neutral-500 sm:hidden w-16 shrink-0">Email</span>
+                  <a
+                    href={`mailto:${PORTFOLIO_DATA.email}`}
+                    onClick={() => haptics.trigger('tap')}
+                    className="text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-neutral-100 underline-offset-4 hover:underline transition-colors truncate"
+                  >
+                    {PORTFOLIO_DATA.email}
+                  </a>
+                </div>
+                <span aria-hidden="true" className="hidden sm:inline">·</span>
+
+                <div className="flex items-center gap-2">
+                  <span className="text-neutral-400 dark:text-neutral-500 sm:hidden w-16 shrink-0">LinkedIn</span>
+                  <a
+                    href={PORTFOLIO_DATA.linkedinUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => haptics.trigger('tap')}
+                    className="text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-neutral-100 underline-offset-4 hover:underline transition-colors truncate"
+                  >
+                    {PORTFOLIO_DATA.linkedin}
+                  </a>
+                </div>
+                <span aria-hidden="true" className="hidden sm:inline">·</span>
+
+                <div className="flex items-center gap-2">
+                  <span className="text-neutral-400 dark:text-neutral-500 sm:hidden w-16 shrink-0">GitHub</span>
+                  <a
+                    href={PORTFOLIO_DATA.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => haptics.trigger('tap')}
+                    className="text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-neutral-100 underline-offset-4 hover:underline transition-colors truncate"
+                  >
+                    {PORTFOLIO_DATA.github}
+                  </a>
+                </div>
+              </div>
             </div>
           </FocusBlock>
         </section>
@@ -286,24 +307,24 @@ export default function App() {
                 <StaggerText
                   text="01. Portofolio & Sistem Otomasi"
                   mode="char"
-                  stagger={0.014}
+                  stagger={0.012}
                 />
               </h2>
-              <p className="text-xs font-mono text-neutral-500 dark:text-neutral-400 mt-1">
+              <p className="text-xs font-mono text-neutral-500 dark:text-neutral-400 mt-1.5 leading-relaxed">
                 <StaggerText
                   text="Klik baris aplikasi atau tekan tombol angka (1–3) untuk membuka tautan langsung"
                   mode="word"
-                  delay={0.06}
-                  stagger={0.015}
+                  delay={0.05}
+                  stagger={0.014}
                 />
               </p>
             </div>
 
-            {/* Functional Segmented Filter Controls - Responsive fit on mobile without overflowing */}
+            {/* Functional Segmented Filter Controls */}
             <div
               role="tablist"
               aria-label="Filter Kategori Portofolio"
-              className="grid grid-cols-3 sm:inline-flex items-center w-full sm:w-auto p-1 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded"
+              className="grid grid-cols-3 sm:inline-flex items-center w-full sm:w-auto p-1 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded shrink-0"
             >
               {[
                 { key: 'all', label: 'Semua (3)' },
@@ -319,7 +340,7 @@ export default function App() {
                     setActiveFilter(tab.key as FilterMode);
                   }}
                   onMouseEnter={() => haptics.trigger('tick')}
-                  className={`px-2 sm:px-3 py-1.5 sm:py-1 text-[11px] sm:text-xs font-medium text-center rounded-sm transition-colors duration-150 whitespace-nowrap truncate focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900 dark:focus-visible:ring-neutral-100 ${
+                  className={`px-2.5 sm:px-3 py-1.5 sm:py-1 text-xs font-medium text-center rounded-sm transition-colors duration-150 whitespace-nowrap truncate focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900 dark:focus-visible:ring-neutral-100 ${
                     activeFilter === tab.key
                       ? 'bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 shadow-2xs'
                       : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200'
@@ -342,100 +363,86 @@ export default function App() {
                   exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
                   onMouseEnter={() => haptics.trigger('tick')}
-                  className="group py-7 sm:py-10 transition-colors duration-150 gpu-layer"
+                  className="group py-8 sm:py-10 transition-colors duration-150 gpu-layer"
                 >
                   <FocusBlock>
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-start">
                       {/* Index & Title Column */}
                       <div className="lg:col-span-5 min-w-0">
-                        <div className="flex items-baseline gap-2.5 sm:gap-3">
-                          <span className="text-xs font-mono tabular-nums text-neutral-400 dark:text-neutral-500 shrink-0">
-                            {project.index}.
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <span className="text-xs font-mono tabular-nums text-neutral-400 dark:text-neutral-500">
+                            {project.index}
                           </span>
-                          <div className="min-w-0">
-                            <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100 group-hover:underline underline-offset-4 break-words">
-                              <a
-                                href={project.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={() => haptics.trigger('confirm')}
-                                className="focus-visible:outline-none focus-visible:underline"
-                              >
-                                <StaggerText
-                                  text={project.title}
-                                  mode="char"
-                                  delay={projectIdx * 0.04}
-                                  stagger={0.014}
-                                />
-                              </a>
-                            </h3>
-                            <p className="text-xs font-mono text-neutral-500 dark:text-neutral-400 mt-1 break-all">
-                              <StaggerText
-                                text={project.displayUrl}
-                                mode="char"
-                                delay={0.05}
-                                stagger={0.008}
-                              />
-                            </p>
-                          </div>
+                          <span aria-hidden="true" className="text-xs text-neutral-300 dark:text-neutral-700">
+                            —
+                          </span>
+                          <span className="text-xs font-mono text-neutral-600 dark:text-neutral-400">
+                            {project.impactMetric}
+                          </span>
                         </div>
 
-                        {/* Unboxed Metadata Line */}
-                        <div className="mt-3 pl-5 sm:pl-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-neutral-500 dark:text-neutral-400">
-                          <StaggerText
-                            text={project.category}
-                            mode="word"
-                            delay={0.06}
-                            stagger={0.018}
-                          />
-                          <span aria-hidden="true">·</span>
-                          <span className="font-mono text-neutral-700 dark:text-neutral-300">
+                        <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100 group-hover:underline underline-offset-4">
+                          <a
+                            href={project.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => haptics.trigger('confirm')}
+                            className="focus-visible:outline-none focus-visible:underline"
+                          >
                             <StaggerText
-                              text={project.impactMetric}
-                              mode="word"
-                              delay={0.1}
-                              stagger={0.018}
+                              text={project.title}
+                              mode="char"
+                              delay={projectIdx * 0.03}
+                              stagger={0.012}
                             />
-                          </span>
-                        </div>
+                          </a>
+                        </h3>
+
+                        <p className="text-xs font-mono text-neutral-500 dark:text-neutral-400 mt-1 truncate">
+                          {project.displayUrl}
+                        </p>
+
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-2">
+                          {project.category}
+                        </p>
                       </div>
 
-                      {/* Description & Unboxed Highlights Column */}
+                      {/* Description & Clean Highlights List Column */}
                       <div className="lg:col-span-5 min-w-0">
                         <div className="text-sm sm:text-[15px] leading-relaxed text-neutral-700 dark:text-neutral-300">
                           <StaggerText
                             text={project.description}
                             mode="word"
-                            delay={0.04}
-                            stagger={0.014}
+                            delay={0.03}
+                            stagger={0.013}
                           />
                         </div>
-                        <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-mono text-neutral-500 dark:text-neutral-400">
-                          {project.highlights.map((item, idx) => (
-                            <React.Fragment key={item}>
-                              <StaggerText
-                                text={item}
-                                mode="word"
-                                delay={0.08 + idx * 0.03}
-                                stagger={0.015}
-                              />
-                              {idx < project.highlights.length - 1 && (
-                                <span aria-hidden="true">/</span>
-                              )}
-                            </React.Fragment>
+
+                        {/* Clean vertical/inline list without dangling trailing slashes */}
+                        <ul className="mt-3.5 pt-3 border-t border-neutral-200/60 dark:border-neutral-800/60 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-1.5 text-xs font-mono text-neutral-500 dark:text-neutral-400">
+                          {project.highlights.map((item) => (
+                            <li key={item} className="flex items-start gap-2">
+                              <span
+                                aria-hidden="true"
+                                className="text-neutral-400 dark:text-neutral-600 select-none shrink-0"
+                              >
+                                —
+                              </span>
+                              <span>{item}</span>
+                            </li>
                           ))}
-                        </div>
+                        </ul>
                       </div>
 
                       {/* Action Column: Direct Redirect + Copy/Inspect */}
-                      <div className="lg:col-span-2 flex flex-wrap sm:flex-nowrap lg:flex-col items-center sm:items-end justify-start sm:justify-end gap-2 pt-1 lg:pt-0 w-full">
+                      <div className="lg:col-span-2 flex flex-row lg:flex-col items-center lg:items-stretch justify-start lg:justify-end gap-2 pt-2 lg:pt-0 w-full">
                         <a
                           href={project.url}
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={() => haptics.trigger('confirm')}
                           onMouseEnter={() => haptics.trigger('tick')}
-                          className="flex-1 sm:flex-initial lg:w-full px-4 py-2 text-xs font-medium text-center bg-neutral-900 text-neutral-50 dark:bg-neutral-100 dark:text-neutral-900 rounded hover:bg-neutral-700 dark:hover:bg-neutral-300 active:scale-[0.98] transition-all duration-150 whitespace-nowrap shrink-0"
+                          className="flex-1 lg:flex-initial px-4 py-2 text-xs font-medium text-center bg-neutral-900 text-neutral-50 dark:bg-neutral-100 dark:text-neutral-900 rounded hover:bg-neutral-700 dark:hover:bg-neutral-300 active:scale-[0.98] transition-all duration-150 whitespace-nowrap shrink-0"
                         >
                           Buka Aplikasi
                         </a>
@@ -445,7 +452,7 @@ export default function App() {
                             type="button"
                             onClick={() => handleCopy(project.url, project.id)}
                             onMouseEnter={() => haptics.trigger('tick')}
-                            className="px-2.5 py-2 sm:py-1.5 text-xs font-mono text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 border border-neutral-200 dark:border-neutral-800 rounded hover:border-neutral-400 dark:hover:border-neutral-600 active:scale-[0.98] transition-all duration-150 whitespace-nowrap shrink-0"
+                            className="flex-1 px-2.5 py-2 lg:py-1.5 text-xs font-mono text-center text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 border border-neutral-200 dark:border-neutral-800 rounded hover:border-neutral-400 dark:hover:border-neutral-600 active:scale-[0.98] transition-all duration-150 whitespace-nowrap shrink-0"
                           >
                             {copiedKey === project.id ? 'Tersalin' : 'Salin URL'}
                           </button>
@@ -456,7 +463,7 @@ export default function App() {
                               setSelectedProject(project);
                             }}
                             onMouseEnter={() => haptics.trigger('tick')}
-                            className="px-2.5 py-2 sm:py-1.5 text-xs font-mono text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 border border-neutral-200 dark:border-neutral-800 rounded hover:border-neutral-400 dark:hover:border-neutral-600 active:scale-[0.98] transition-all duration-150 whitespace-nowrap shrink-0"
+                            className="flex-1 px-2.5 py-2 lg:py-1.5 text-xs font-mono text-center text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 border border-neutral-200 dark:border-neutral-800 rounded hover:border-neutral-400 dark:hover:border-neutral-600 active:scale-[0.98] transition-all duration-150 whitespace-nowrap shrink-0"
                           >
                             Detail
                           </button>
@@ -473,18 +480,18 @@ export default function App() {
         {/* Section 02: PENGALAMAN KERJA */}
         <section
           id="pengalaman"
-          className="py-14 md:py-20 border-b border-neutral-200 dark:border-neutral-800 scroll-mt-14"
+          className="py-12 md:py-20 border-b border-neutral-200 dark:border-neutral-800 scroll-mt-14"
         >
-          <FocusBlock className="mb-10">
+          <FocusBlock className="mb-8 sm:mb-10">
             <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100">
-              <StaggerText text="02. Pengalaman Kerja" mode="char" stagger={0.015} />
+              <StaggerText text="02. Pengalaman Kerja" mode="char" stagger={0.013} />
             </h2>
-            <p className="text-xs font-mono text-neutral-500 dark:text-neutral-400 mt-1">
+            <p className="text-xs font-mono text-neutral-500 dark:text-neutral-400 mt-1.5">
               <StaggerText
                 text="Rekam jejak profesional di industri manufaktur & operasional B2B"
                 mode="word"
-                delay={0.05}
-                stagger={0.016}
+                delay={0.04}
+                stagger={0.015}
               />
             </p>
           </FocusBlock>
@@ -496,52 +503,52 @@ export default function App() {
                 onMouseEnter={() => haptics.trigger('tick')}
                 className="py-8"
               >
-                <FocusBlock className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 items-start">
-                  <div className="md:col-span-4">
-                    <div className="flex items-baseline gap-2.5">
+                <FocusBlock className="grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-8 items-start">
+                  {/* Left Role Column: Generous width and top-aligned period so long titles never split awkwardly */}
+                  <div className="md:col-span-5 pr-2">
+                    <div className="flex items-center gap-2 mb-1.5">
                       <span className="text-xs font-mono tabular-nums text-neutral-400 dark:text-neutral-500">
-                        0{idx + 1}.
+                        0{idx + 1}
                       </span>
-                      <div>
-                        <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
-                          <StaggerText text={exp.role} mode="char" stagger={0.013} />
-                        </h3>
-                        <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-0.5">
-                          <StaggerText
-                            text={exp.company}
-                            mode="word"
-                            delay={0.04}
-                            stagger={0.018}
-                          />
-                        </p>
-                        <p className="text-xs font-mono tabular-nums text-neutral-500 dark:text-neutral-400 mt-1.5">
-                          <StaggerText
-                            text={exp.period}
-                            mode="char"
-                            delay={0.06}
-                            stagger={0.01}
-                          />
-                        </p>
-                      </div>
+                      <span aria-hidden="true" className="text-xs text-neutral-300 dark:text-neutral-700">
+                        —
+                      </span>
+                      <span className="text-xs font-mono tabular-nums text-neutral-500 dark:text-neutral-400">
+                        {exp.period}
+                      </span>
                     </div>
+
+                    <h3 className="text-base sm:text-lg font-semibold tracking-tight text-neutral-900 dark:text-neutral-100 leading-snug">
+                      <StaggerText text={exp.role} mode="word" stagger={0.022} />
+                    </h3>
+
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
+                      <StaggerText
+                        text={exp.company}
+                        mode="word"
+                        delay={0.04}
+                        stagger={0.018}
+                      />
+                    </p>
                   </div>
 
-                  <div className="md:col-span-8">
+                  {/* Right Points Column */}
+                  <div className="md:col-span-7">
                     <ul className="space-y-2.5 text-sm sm:text-[15px] leading-relaxed text-neutral-700 dark:text-neutral-300">
                       {exp.points.map((point, pIdx) => (
                         <li key={point} className="flex items-start gap-3">
                           <span
                             aria-hidden="true"
-                            className="font-mono text-xs text-neutral-400 dark:text-neutral-500 mt-1 select-none"
+                            className="font-mono text-xs text-neutral-400 dark:text-neutral-500 mt-1 select-none shrink-0"
                           >
                             —
                           </span>
-                          <span>
+                          <span className="min-w-0">
                             <StaggerText
                               text={point}
                               mode="word"
-                              delay={pIdx * 0.03}
-                              stagger={0.013}
+                              delay={pIdx * 0.025}
+                              stagger={0.012}
                             />
                           </span>
                         </li>
@@ -557,40 +564,38 @@ export default function App() {
         {/* Section 03: PENDIDIKAN & INFORMASI TAMBAHAN */}
         <section
           id="kualifikasi"
-          className="py-14 md:py-20 border-b border-neutral-200 dark:border-neutral-800 scroll-mt-14"
+          className="py-12 md:py-20 border-b border-neutral-200 dark:border-neutral-800 scroll-mt-14"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12">
             {/* Pendidikan */}
             <FocusBlock className="lg:col-span-5">
               <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100 mb-6">
-                <StaggerText text="03. Pendidikan" mode="char" stagger={0.015} />
+                <StaggerText text="03. Pendidikan" mode="char" stagger={0.014} />
               </h2>
 
               <div className="border-t border-neutral-200 dark:border-neutral-800 pt-6">
                 {PORTFOLIO_DATA.education.map((edu) => (
                   <div key={edu.institution}>
-                    <div className="flex items-baseline justify-between gap-4">
-                      <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
-                        <StaggerText text={edu.major} mode="char" stagger={0.014} />
-                      </h3>
-                      <span className="text-xs font-mono tabular-nums text-neutral-500 dark:text-neutral-400 shrink-0">
-                        {edu.period}
-                      </span>
-                    </div>
+                    <p className="text-xs font-mono tabular-nums text-neutral-500 dark:text-neutral-400 mb-1">
+                      {edu.period}
+                    </p>
+                    <h3 className="text-base sm:text-lg font-semibold text-neutral-900 dark:text-neutral-100 leading-snug">
+                      <StaggerText text={edu.major} mode="word" stagger={0.02} />
+                    </h3>
                     <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
-                      <StaggerText text={edu.institution} mode="word" delay={0.04} />
+                      <StaggerText text={edu.institution} mode="word" delay={0.03} />
                     </p>
 
-                    <div className="mt-4">
-                      <p className="text-xs font-mono text-neutral-500 dark:text-neutral-400 mb-2">
+                    <div className="mt-5 pt-4 border-t border-neutral-200/60 dark:border-neutral-800/60">
+                      <p className="text-xs font-mono text-neutral-500 dark:text-neutral-400 mb-2.5">
                         Tugas Akhir:
                       </p>
-                      <ul className="space-y-1.5 text-sm text-neutral-700 dark:text-neutral-300">
+                      <ul className="space-y-2 text-sm text-neutral-700 dark:text-neutral-300">
                         {edu.finalProjects.map((fp, fpIdx) => (
                           <li key={fp} className="flex items-start gap-2.5">
                             <span
                               aria-hidden="true"
-                              className="font-mono text-xs text-neutral-400 mt-0.5"
+                              className="font-mono text-xs text-neutral-400 mt-0.5 shrink-0"
                             >
                               —
                             </span>
@@ -598,8 +603,8 @@ export default function App() {
                               <StaggerText
                                 text={fp}
                                 mode="word"
-                                delay={0.04 + fpIdx * 0.03}
-                                stagger={0.015}
+                                delay={0.03 + fpIdx * 0.03}
+                                stagger={0.014}
                               />
                             </span>
                           </li>
@@ -617,75 +622,75 @@ export default function App() {
                 <StaggerText
                   text="04. Keahlian & Informasi Tambahan"
                   mode="char"
-                  stagger={0.014}
+                  stagger={0.013}
                 />
               </h2>
 
               <dl className="divide-y divide-neutral-200 dark:divide-neutral-800 border-t border-b border-neutral-200 dark:border-neutral-800 text-sm">
-                <div className="py-4 grid grid-cols-1 sm:grid-cols-12 gap-2">
+                <div className="py-4 grid grid-cols-1 sm:grid-cols-12 gap-1.5 sm:gap-4 items-baseline">
                   <dt className="sm:col-span-4 font-mono text-xs text-neutral-500 dark:text-neutral-400">
                     Keahlian Teknis
                   </dt>
-                  <dd className="sm:col-span-8 text-neutral-800 dark:text-neutral-200">
+                  <dd className="sm:col-span-8 text-neutral-800 dark:text-neutral-200 leading-relaxed">
                     <StaggerText
                       text={PORTFOLIO_DATA.additionalInfo.technicalSkills.join(' · ')}
                       mode="word"
-                      stagger={0.015}
+                      stagger={0.014}
                     />
                   </dd>
                 </div>
 
-                <div className="py-4 grid grid-cols-1 sm:grid-cols-12 gap-2">
+                <div className="py-4 grid grid-cols-1 sm:grid-cols-12 gap-1.5 sm:gap-4 items-baseline">
                   <dt className="sm:col-span-4 font-mono text-xs text-neutral-500 dark:text-neutral-400">
                     Interpersonal
                   </dt>
-                  <dd className="sm:col-span-8 text-neutral-800 dark:text-neutral-200">
+                  <dd className="sm:col-span-8 text-neutral-800 dark:text-neutral-200 leading-relaxed">
                     <StaggerText
                       text={PORTFOLIO_DATA.additionalInfo.interpersonalSkills.join(' · ')}
                       mode="word"
-                      stagger={0.015}
+                      stagger={0.014}
                     />
                   </dd>
                 </div>
 
-                <div className="py-4 grid grid-cols-1 sm:grid-cols-12 gap-2">
+                <div className="py-4 grid grid-cols-1 sm:grid-cols-12 gap-1.5 sm:gap-4 items-baseline">
                   <dt className="sm:col-span-4 font-mono text-xs text-neutral-500 dark:text-neutral-400">
                     Bahasa
                   </dt>
-                  <dd className="sm:col-span-8 text-neutral-800 dark:text-neutral-200">
+                  <dd className="sm:col-span-8 text-neutral-800 dark:text-neutral-200 leading-relaxed">
                     <StaggerText
                       text={PORTFOLIO_DATA.additionalInfo.languages}
                       mode="word"
-                      stagger={0.015}
+                      stagger={0.014}
                     />
                   </dd>
                 </div>
 
-                <div className="py-4 grid grid-cols-1 sm:grid-cols-12 gap-2">
+                <div className="py-4 grid grid-cols-1 sm:grid-cols-12 gap-1.5 sm:gap-4 items-baseline">
                   <dt className="sm:col-span-4 font-mono text-xs text-neutral-500 dark:text-neutral-400">
                     Sertifikasi
                   </dt>
-                  <dd className="sm:col-span-8 text-neutral-800 dark:text-neutral-200">
+                  <dd className="sm:col-span-8 text-neutral-800 dark:text-neutral-200 leading-relaxed">
                     <StaggerText
                       text={PORTFOLIO_DATA.additionalInfo.certifications.join(' · ')}
                       mode="word"
-                      stagger={0.015}
+                      stagger={0.014}
                     />
                   </dd>
                 </div>
 
-                <div className="py-4 grid grid-cols-1 sm:grid-cols-12 gap-2">
+                <div className="py-4 grid grid-cols-1 sm:grid-cols-12 gap-1.5 sm:gap-4 items-baseline">
                   <dt className="sm:col-span-4 font-mono text-xs text-neutral-500 dark:text-neutral-400">
                     Aktivitas Sampingan
                   </dt>
-                  <dd className="sm:col-span-8 text-neutral-800 dark:text-neutral-200 space-y-1.5">
+                  <dd className="sm:col-span-8 text-neutral-800 dark:text-neutral-200 space-y-2 leading-relaxed">
                     {PORTFOLIO_DATA.additionalInfo.sideActivities.map((act, aIdx) => (
                       <p key={act}>
                         <StaggerText
                           text={act}
                           mode="word"
-                          delay={aIdx * 0.04}
-                          stagger={0.014}
+                          delay={aIdx * 0.03}
+                          stagger={0.013}
                         />
                       </p>
                     ))}
@@ -697,32 +702,32 @@ export default function App() {
         </section>
 
         {/* Section 05: KONTAK & DOKUMEN LAMARAN */}
-        <section id="kontak" className="pt-14 md:pt-20 scroll-mt-14">
-          <FocusBlock className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-            <div>
+        <section id="kontak" className="pt-12 md:pt-20 scroll-mt-14">
+          <FocusBlock className="flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-8">
+            <div className="max-w-xl">
               <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100">
                 <StaggerText
                   text="05. Kontak & Tautan Langsung"
                   mode="char"
-                  stagger={0.015}
+                  stagger={0.014}
                 />
               </h2>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
+              <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1.5 leading-relaxed">
                 <StaggerText
                   text="Tersedia untuk diskusi peluang kerja penuh waktu maupun implementasi sistem otomasi operasional."
                   mode="word"
-                  delay={0.05}
-                  stagger={0.015}
+                  delay={0.04}
+                  stagger={0.014}
                 />
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2.5 w-full md:w-auto">
               <a
                 href={`mailto:${PORTFOLIO_DATA.email}`}
                 onClick={() => haptics.trigger('confirm')}
                 onMouseEnter={() => haptics.trigger('tick')}
-                className="px-4 py-2 text-xs font-medium bg-neutral-900 text-neutral-50 dark:bg-neutral-100 dark:text-neutral-900 rounded hover:bg-neutral-700 dark:hover:bg-neutral-300 active:scale-[0.98] transition-all duration-150 whitespace-nowrap shrink-0"
+                className="px-4 py-2.5 sm:py-2 text-xs font-medium text-center bg-neutral-900 text-neutral-50 dark:bg-neutral-100 dark:text-neutral-900 rounded hover:bg-neutral-700 dark:hover:bg-neutral-300 active:scale-[0.98] transition-all duration-150 whitespace-nowrap shrink-0"
               >
                 Kirim Email
               </a>
@@ -732,9 +737,9 @@ export default function App() {
                 rel="noopener noreferrer"
                 onClick={() => haptics.trigger('confirm')}
                 onMouseEnter={() => haptics.trigger('tick')}
-                className="px-4 py-2 text-xs font-medium border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 rounded hover:border-neutral-900 dark:hover:border-neutral-300 active:scale-[0.98] transition-all duration-150 whitespace-nowrap shrink-0"
+                className="px-4 py-2.5 sm:py-2 text-xs font-medium text-center border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 rounded hover:border-neutral-900 dark:hover:border-neutral-300 active:scale-[0.98] transition-all duration-150 whitespace-nowrap shrink-0"
               >
-                WhatsApp ({PORTFOLIO_DATA.phone})
+                WhatsApp
               </a>
               <a
                 href={PORTFOLIO_DATA.linkedinUrl}
@@ -742,7 +747,7 @@ export default function App() {
                 rel="noopener noreferrer"
                 onClick={() => haptics.trigger('tap')}
                 onMouseEnter={() => haptics.trigger('tick')}
-                className="px-4 py-2 text-xs font-medium border border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 rounded hover:border-neutral-400 dark:hover:border-neutral-600 active:scale-[0.98] transition-all duration-150 whitespace-nowrap shrink-0"
+                className="px-4 py-2.5 sm:py-2 text-xs font-medium text-center border border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 rounded hover:border-neutral-400 dark:hover:border-neutral-600 active:scale-[0.98] transition-all duration-150 whitespace-nowrap shrink-0"
               >
                 LinkedIn
               </a>
@@ -752,7 +757,7 @@ export default function App() {
                 rel="noopener noreferrer"
                 onClick={() => haptics.trigger('tap')}
                 onMouseEnter={() => haptics.trigger('tick')}
-                className="px-4 py-2 text-xs font-medium border border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 rounded hover:border-neutral-400 dark:hover:border-neutral-600 active:scale-[0.98] transition-all duration-150 whitespace-nowrap shrink-0"
+                className="px-4 py-2.5 sm:py-2 text-xs font-medium text-center border border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 rounded hover:border-neutral-400 dark:hover:border-neutral-600 active:scale-[0.98] transition-all duration-150 whitespace-nowrap shrink-0"
               >
                 GitHub
               </a>
@@ -763,7 +768,7 @@ export default function App() {
 
       {/* Minimalist Footer */}
       <footer className="border-t border-neutral-200 dark:border-neutral-800 py-8">
-        <div className="max-w-[1080px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs font-mono text-neutral-500 dark:text-neutral-400">
+        <div className="max-w-[1080px] mx-auto px-5 sm:px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-mono text-neutral-500 dark:text-neutral-400">
           <div>
             <span>{PORTFOLIO_DATA.name}</span>
             <span aria-hidden="true" className="mx-2">·</span>
@@ -824,7 +829,7 @@ export default function App() {
                     setSelectedProject(null);
                   }}
                   aria-label="Tutup detail proyek"
-                  className="px-2.5 py-1 text-xs font-mono text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100 border border-neutral-200 dark:border-neutral-800 rounded"
+                  className="px-2.5 py-1 text-xs font-mono text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100 border border-neutral-200 dark:border-neutral-800 rounded shrink-0"
                 >
                   ESC
                 </button>
