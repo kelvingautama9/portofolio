@@ -852,6 +852,7 @@ export default function App() {
                       text={selectedProject.title}
                       mode="char"
                       stagger={0.012}
+                      autoTrigger
                     />
                   </h3>
                 </div>
@@ -877,7 +878,9 @@ export default function App() {
                     <StaggerText
                       text={selectedProject.description}
                       mode="word"
-                      stagger={0.012}
+                      delay={0.04}
+                      stagger={0.013}
+                      autoTrigger
                     />
                   </p>
                 </div>
@@ -887,12 +890,20 @@ export default function App() {
                     Cakupan & Spesifikasi
                   </p>
                   <ul className="space-y-1.5 text-sm text-neutral-700 dark:text-neutral-300">
-                    {selectedProject.highlights.map((h) => (
+                    {selectedProject.highlights.map((h, hIdx) => (
                       <li key={h} className="flex items-start gap-2.5">
                         <span aria-hidden="true" className="font-mono text-xs text-neutral-400 mt-0.5">
                           —
                         </span>
-                        <span>{h}</span>
+                        <span>
+                          <StaggerText
+                            text={h}
+                            mode="word"
+                            delay={0.08 + hIdx * 0.04}
+                            stagger={0.014}
+                            autoTrigger
+                          />
+                        </span>
                       </li>
                     ))}
                   </ul>

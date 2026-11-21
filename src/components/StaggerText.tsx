@@ -14,13 +14,16 @@ interface StaggerTextProps {
   delay?: number;
   /** Jarak waktu antar kata/karakter (detik) */
   stagger?: number;
+  /** Jika true (misal di dalam Modal), langsung jalankan animasi fade-in saat komponen muncul */
+  autoTrigger?: boolean;
 }
 
 /**
  * StaggerText (Zero-Lag 144Hz Architecture):
  * Menggunakan pure CSS compositor transition (`opacity` + `translate3d`) dengan
- * variabel `--stagger-delay` dan hanya 1 IntersectionObserver pada komponen induk,
- * tanpa membuat ratusan instance JS Framer Motion atau filter `blur()` yang berat.
+ * variabel `--stagger-delay`.
+ * Dapat dipicu baik oleh parent `FocusBlock` saat di-scroll maupun secara mandiri
+ * (`autoTrigger`) saat muncul di dalam Modal Detail.
  */
 export const StaggerText: React.FC<StaggerTextProps> = ({
   text,
@@ -28,8 +31,20 @@ export const StaggerText: React.FC<StaggerTextProps> = ({
   as: Tag = 'span',
   mode = 'word',
   delay = 0,
-  stagger
+  stagger,
+  autoTrigger = false
 }) => {
+  const [selfTriggered, setSelfTriggered] = useState(false);
+
+  useEffect(() => {
+    if (!autoTrigger) return;
+    setSelfTriggered(false);
+    const raf = requestAnimationFrame(() => {
+      setSelfTriggered(true);
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [autoTrigger, text]);
+
   const words = text.split(' ');
   const stepMs = (stagger ?? (mode === 'char' ? 0.011 : 0.015)) * 1000;
   const baseDelayMs = delay * 1000;
@@ -37,7 +52,11 @@ export const StaggerText: React.FC<StaggerTextProps> = ({
   let charCursor = 0;
 
   return (
-    <Tag aria-label={text} className={`inline ${className}`}>
+    <Tag
+      aria-label={text}
+      data-focused={autoTrigger ? (selfTriggered ? 'true' : 'false') : undefined}
+      className={`inline ${className}`}
+    >
       {words.map((word, wordIdx) => {
         if (mode === 'char') {
           const chars = Array.from(word);
@@ -93,8 +112,8 @@ interface FocusSectionProps {
 /**
  * FocusBlock:
  * Satu-satunya observer per blok bagian. Mengatur atribut `data-focused="true"`
- * sehingga seluruh StaggerText di dalamnya beranimasi langsung melalui CSS GPU compositor
- * tanpa memicu React re-render pada setiap kata/huruf.
+ * ketika masuk ke viewport (dan memulai dari `false` agar animasi fade-in terlihat
+ * mengalir dari awal saat halaman dimuat maupun saat di-scroll).
  */
 export const FocusBlock: React.FC<FocusSectionProps> = ({
   id,
@@ -102,7 +121,7 @@ export const FocusBlock: React.FC<FocusSectionProps> = ({
   children
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [isFocused, setIsFocused] = useState(true);
+  const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
@@ -122,8 +141,8 @@ export const FocusBlock: React.FC<FocusSectionProps> = ({
         });
       },
       {
-        threshold: 0.08,
-        rootMargin: '0px 0px -6% 0px'
+        threshold: 0.06,
+        rootMargin: '0px 0px -5% 0px'
       }
     );
 
