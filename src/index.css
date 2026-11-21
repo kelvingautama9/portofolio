@@ -8,11 +8,21 @@
     scroll-behavior: smooth;
     overflow-x: hidden;
     max-width: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   .font-mono {
     font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
   }
+}
+
+/* High Refresh Rate (60Hz - 144Hz+) GPU Compositor Optimization */
+.gpu-layer {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
 }
 
 @media (prefers-reduced-motion: reduce) {
